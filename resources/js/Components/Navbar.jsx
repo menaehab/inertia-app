@@ -12,10 +12,12 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { router } from "@inertiajs/react";
-const pages = [{
-    name: "Users",
-    href: "/users",
-}];
+const pages = [
+    {
+        name: "Users",
+        href: "/users",
+    },
+];
 const settings = ["Logout"];
 
 function Navbar() {
@@ -43,7 +45,13 @@ function Navbar() {
     };
 
     return (
-        <AppBar position="static" sx={{ bgcolor: 'white', color: 'black' }}>
+        <AppBar
+            position="static"
+            sx={{
+                background: "linear-gradient(135deg, #1976d2 0%, #2196f3 100%)",
+                boxShadow: "0 4px 20px rgba(25, 118, 210, 0.25)",
+            }}
+        >
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Typography
@@ -53,15 +61,20 @@ function Navbar() {
                         sx={{
                             mr: 2,
                             display: { xs: "none", md: "flex" },
-                            fontFamily: "monospace",
-                            fontWeight: 700,
-                            letterSpacing: ".3rem",
-                            color: "inherit",
+                            fontFamily: "'Inter', 'Roboto', sans-serif",
+                            fontWeight: 800,
+                            letterSpacing: "1px",
+                            color: "white",
                             textDecoration: "none",
                             cursor: "pointer",
+                            transition: "all 0.3s ease",
+                            "&:hover": {
+                                transform: "scale(1.02)",
+                                textShadow: "0 2px 10px rgba(255, 255, 255, 0.3)",
+                            },
                         }}
                     >
-                        Inertia App
+                        INERTIA APP
                     </Typography>
 
                     <Box
@@ -76,7 +89,12 @@ function Navbar() {
                             aria-controls="menu-appbar"
                             aria-haspopup="true"
                             onClick={handleOpenNavMenu}
-                            color="inherit"
+                            sx={{
+                                color: "white",
+                                "&:hover": {
+                                    backgroundColor: "rgba(255, 255, 255, 0.1)",
+                                },
+                            }}
                         >
                             <MenuIcon />
                         </IconButton>
@@ -94,7 +112,13 @@ function Navbar() {
                             }}
                             open={Boolean(anchorElNav)}
                             onClose={handleCloseNavMenu}
-                            sx={{ display: { xs: "block", md: "none" } }}
+                            sx={{
+                                display: { xs: "block", md: "none" },
+                                "& .MuiPaper-root": {
+                                    borderRadius: 2,
+                                    mt: 1,
+                                },
+                            }}
                         >
                             {pages.map((page) => (
                                 <MenuItem
@@ -102,6 +126,11 @@ function Navbar() {
                                     onClick={() => {
                                         handleCloseNavMenu();
                                         navigate(page.href);
+                                    }}
+                                    sx={{
+                                        "&:hover": {
+                                            backgroundColor: "rgba(25, 118, 210, 0.08)",
+                                        },
                                     }}
                                 >
                                     <Typography sx={{ textAlign: "center" }}>
@@ -119,46 +148,81 @@ function Navbar() {
                             mr: 2,
                             display: { xs: "flex", md: "none" },
                             flexGrow: 1,
-                            fontFamily: "monospace",
-                            fontWeight: 700,
-                            letterSpacing: ".3rem",
-                            color: "inherit",
+                            fontFamily: "'Inter', 'Roboto', sans-serif",
+                            fontWeight: 800,
+                            letterSpacing: "1px",
+                            color: "white",
                             textDecoration: "none",
                             cursor: "pointer",
                         }}
                     >
-                        Inertia App
+                        INERTIA
                     </Typography>
                     <Box
                         sx={{
                             flexGrow: 1,
                             display: { xs: "none", md: "flex" },
+                            gap: 1,
                         }}
                     >
                         {pages.map((page) => (
                             <Button
                                 key={page.name}
                                 onClick={() => navigate(page.href)}
-                                sx={{ my: 2, color: "black", display: "block" }}
+                                sx={{
+                                    my: 2,
+                                    color: "white",
+                                    display: "block",
+                                    fontWeight: 600,
+                                    textTransform: "none",
+                                    fontSize: "1rem",
+                                    px: 2.5,
+                                    borderRadius: 2,
+                                    transition: "all 0.3s ease",
+                                    "&:hover": {
+                                        backgroundColor: "rgba(255, 255, 255, 0.15)",
+                                        transform: "translateY(-2px)",
+                                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                    },
+                                }}
                             >
                                 {page.name}
                             </Button>
                         ))}
                     </Box>
                     <Box sx={{ flexGrow: 0 }}>
-                        <Tooltip title="Open settings">
+                        <Tooltip title="Open settings" arrow>
                             <IconButton
                                 onClick={handleOpenUserMenu}
-                                sx={{ p: 0 }}
+                                sx={{
+                                    p: 0,
+                                    transition: "transform 0.3s ease",
+                                    "&:hover": {
+                                        transform: "scale(1.1)",
+                                    },
+                                }}
                             >
                                 <Avatar
-                                    alt="Remy Sharp"
-                                    src="/static/images/avatar/2.jpg"
-                                />
+                                    alt="User"
+                                    sx={{
+                                        bgcolor: "rgba(255, 255, 255, 0.2)",
+                                        color: "white",
+                                        fontWeight: 700,
+                                        border: "2px solid white",
+                                    }}
+                                >
+                                    M
+                                </Avatar>
                             </IconButton>
                         </Tooltip>
                         <Menu
-                            sx={{ mt: "45px" }}
+                            sx={{
+                                mt: "45px",
+                                "& .MuiPaper-root": {
+                                    borderRadius: 2,
+                                    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.15)",
+                                },
+                            }}
                             id="menu-appbar"
                             anchorEl={anchorElUser}
                             anchorOrigin={{
@@ -177,6 +241,12 @@ function Navbar() {
                                 <MenuItem
                                     key={setting}
                                     onClick={handleCloseUserMenu}
+                                    sx={{
+                                        minWidth: 120,
+                                        "&:hover": {
+                                            backgroundColor: "rgba(25, 118, 210, 0.08)",
+                                        },
+                                    }}
                                 >
                                     <Typography sx={{ textAlign: "center" }}>
                                         {setting}

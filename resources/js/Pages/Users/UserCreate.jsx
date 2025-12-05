@@ -62,12 +62,34 @@ export default function UserCreate() {
     const passwordStrength = getPasswordStrength();
 
     return (
-        <Box sx={{ maxWidth: 600, mx: "auto", mt: 4 }}>
-            <Card elevation={3}>
-                <CardContent>
-                    <Typography variant="h4" component="h1" gutterBottom sx={{ mb: 3 }}>
+        <Box sx={{ maxWidth: 600, mx: "auto", mt: 4, px: 2 }}>
+            <Card
+                elevation={0}
+                sx={{
+                    borderRadius: 3,
+                    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
+                    overflow: "hidden",
+                }}
+            >
+                <Box
+                    sx={{
+                        background: "linear-gradient(135deg, #1976d2 0%, #2196f3 100%)",
+                        p: 3,
+                    }}
+                >
+                    <Typography
+                        variant="h4"
+                        component="h1"
+                        sx={{
+                            color: "white",
+                            fontWeight: 700,
+                            letterSpacing: "0.5px",
+                        }}
+                    >
                         Create A New User
                     </Typography>
+                </Box>
+                <CardContent sx={{ p: 4 }}>
 
                     {processing && <LinearProgress sx={{ mb: 2 }} />}
 
@@ -176,12 +198,23 @@ export default function UserCreate() {
                     </form>
                 </CardContent>
 
-                <CardActions sx={{ justifyContent: "flex-end", px: 2, pb: 2 }}>
+                <CardActions sx={{ justifyContent: "flex-end", px: 4, pb: 3, pt: 2, gap: 1.5 }}>
                     <Button
                         variant="outlined"
                         startIcon={<CancelIcon />}
                         onClick={handleCancel}
                         disabled={processing}
+                        sx={{
+                            textTransform: "none",
+                            fontWeight: 600,
+                            px: 3,
+                            borderColor: "divider",
+                            color: "text.secondary",
+                            "&:hover": {
+                                borderColor: "text.secondary",
+                                backgroundColor: "action.hover",
+                            },
+                        }}
                     >
                         Cancel
                     </Button>
@@ -190,6 +223,20 @@ export default function UserCreate() {
                         startIcon={<SaveIcon />}
                         onClick={handleSubmit}
                         disabled={processing}
+                        sx={{
+                            background: "linear-gradient(135deg, #1976d2 0%, #2196f3 100%)",
+                            textTransform: "none",
+                            fontWeight: 700,
+                            px: 4,
+                            boxShadow: "0 4px 12px rgba(25, 118, 210, 0.3)",
+                            "&:hover": {
+                                background: "linear-gradient(135deg, #1565c0 0%, #1976d2 100%)",
+                                boxShadow: "0 6px 16px rgba(25, 118, 210, 0.4)",
+                            },
+                            "&:disabled": {
+                                background: "rgba(0, 0, 0, 0.12)",
+                            },
+                        }}
                     >
                         {processing ? "Creating..." : "Create User"}
                     </Button>
