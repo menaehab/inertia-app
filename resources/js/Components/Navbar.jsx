@@ -12,10 +12,11 @@ import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { router } from "@inertiajs/react";
+import { route } from "ziggy-js";
 const pages = [
     {
         name: "Users",
-        href: "/users",
+        href: route("users.index"),
     },
 ];
 const settings = ["Logout"];
@@ -143,7 +144,7 @@ function Navbar() {
                     <Typography
                         variant="h5"
                         noWrap
-                        onClick={() => navigate("/")}
+                        onClick={() => navigate(route("home"))}
                         sx={{
                             mr: 2,
                             display: { xs: "flex", md: "none" },

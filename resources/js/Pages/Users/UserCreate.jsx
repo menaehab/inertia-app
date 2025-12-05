@@ -35,11 +35,11 @@ export default function UserCreate() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        post("/users");
+        post(route("users.store"));
     };
 
     const handleCancel = () => {
-        router.visit("/users");
+        router.visit(route("users.index"));
     };
 
     // Get password strength

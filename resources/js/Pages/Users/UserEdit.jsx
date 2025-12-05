@@ -35,11 +35,11 @@ export default function UserEdit({ user }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        put(`/users/${user.id}`);
+        put(route("users.update", user.id));
     };
 
     const handleCancel = () => {
-        router.visit("/users");
+        router.visit(route("users.index"));
     };
 
     const getPasswordStrength = () => {

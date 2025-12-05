@@ -5,7 +5,7 @@ import { router } from "@inertiajs/react";
 import PeopleIcon from "@mui/icons-material/People";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-
+import { route } from "ziggy-js";
 export default function Home() {
     return (
         <Box>
@@ -114,7 +114,7 @@ export default function Home() {
                                 <Button
                                     variant="contained"
                                     endIcon={<ArrowForwardIcon />}
-                                    onClick={() => router.visit("/users")}
+                                    onClick={() => router.visit(route('users.index'))}
                                     sx={{
                                         background: "linear-gradient(135deg, #1976d2 0%, #2196f3 100%)",
                                         textTransform: "none",

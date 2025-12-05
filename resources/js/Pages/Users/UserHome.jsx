@@ -14,7 +14,7 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { Button } from "@mui/material";
-
+import { route } from "ziggy-js";
 export default function UserHome({ users }) {
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [detailsModalOpen, setDetailsModalOpen] = useState(false);
@@ -41,7 +41,7 @@ export default function UserHome({ users }) {
     };
 
     const handleConfirmDelete = () => {
-        router.delete(`/users/${selectedUser.id}`);
+        router.delete(route('users.destroy',selectedUser.id));
         handleCloseDeleteModal();
     };
 
@@ -60,7 +60,7 @@ export default function UserHome({ users }) {
                 >
                     Users Management
                 </Typography>
-                <Link href="/users/create">
+                <Link href={route('users.create')}>
                     <Button
                         variant="contained"
                         startIcon={<AddIcon />}
@@ -98,7 +98,7 @@ export default function UserHome({ users }) {
                             </IconButton>
                         </Tooltip>
                         <Tooltip title="Edit">
-                            <Link href={`/users/${row.id}/edit`}>
+                            <Link href={route('users.edit', row.id)}>
                                 <IconButton color="warning" size="small">
                                     <EditIcon />
                                 </IconButton>
