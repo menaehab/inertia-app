@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Layout from "../../Layouts/Layout";
-import { router } from "@inertiajs/react";
+import { router, useForm } from "@inertiajs/react";
 import {
     TextField,
     Button,
@@ -22,8 +22,8 @@ import {
     Cancel as CancelIcon,
 } from "@mui/icons-material";
 
-export default function UserCreate({ errors }) {
-    const [form, setForm] = useState({
+export default function UserCreate() {
+    const { data, setData, post, processing, errors } = useForm({
         name: "",
         email: "",
         password: "",
@@ -32,82 +32,19 @@ export default function UserCreate({ errors }) {
 
     const [showPassword, setShowPassword] = useState(false);
     const [showPasswordConfirmation, setShowPasswordConfirmation] = useState(false);
-    const [processing, setProcessing] = useState(false);
-    const [validationErrors, setValidationErrors] = useState({});
-
-    // Client-side validation
-    const validateForm = () => {
-        const newErrors = {};
-
-        // Name validation
-        if (!form.name.trim()) {
-            newErrors.name = "Name is required";
-        } else if (form.name.trim().length < 3) {
-            newErrors.name = "Name must be at least 3 characters";
-        }
-
-        // Email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!form.email.trim()) {
-            newErrors.email = "Email is required";
-        } else if (!emailRegex.test(form.email)) {
-            newErrors.email = "Please enter a valid email address";
-        }
-
-        // Password validation
-        if (!form.password) {
-            newErrors.password = "Password is required";
-        } else if (form.password.length < 8) {
-            newErrors.password = "Password must be at least 8 characters";
-        }
-
-        // Password confirmation validation
-        if (!form.password_confirmation) {
-            newErrors.password_confirmation = "Password confirmation is required";
-        } else if (form.password !== form.password_confirmation) {
-            newErrors.password_confirmation = "Passwords do not match";
-        }
-
-        setValidationErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        if (!validateForm()) {
-            return;
-        }
-
-        setProcessing(true);
-
-        router.post("/users", form, {
-            onSuccess: () => {
-                // Form submitted successfully
-                setProcessing(false);
-            },
-            onError: (errors) => {
-                setValidationErrors(errors);
-                setProcessing(false);
-            },
-        });
+        post("/users");
     };
 
     const handleCancel = () => {
         router.visit("/users");
     };
 
-    const handleChange = (field, value) => {
-        setForm({ ...form, [field]: value });
-        // Clear validation error for this field when user starts typing
-        if (validationErrors[field]) {
-            setValidationErrors({ ...validationErrors, [field]: undefined });
-        }
-    };
-
     // Get password strength
     const getPasswordStrength = () => {
-        const { password } = form;
+        const { password } = data;
         if (!password) return { value: 0, label: "", color: "error" };
 
         let strength = 0;
@@ -123,7 +60,6 @@ export default function UserCreate({ errors }) {
     };
 
     const passwordStrength = getPasswordStrength();
-    const displayErrors = { ...validationErrors, ...(errors || {}) };
 
     return (
         <Box sx={{ maxWidth: 600, mx: "auto", mt: 4 }}>
@@ -142,10 +78,10 @@ export default function UserCreate({ errors }) {
                                 fullWidth
                                 label="Name"
                                 placeholder="Enter full name"
-                                value={form.name}
-                                onChange={(e) => handleChange("name", e.target.value)}
-                                error={!!displayErrors.name}
-                                helperText={displayErrors.name}
+                                value={data.name}
+                                onChange={(e) => setData("name", e.target.value)}
+                                error={!!errors.name}
+                                helperText={errors.name}
                                 disabled={processing}
                             />
 
@@ -155,10 +91,10 @@ export default function UserCreate({ errors }) {
                                 type="email"
                                 label="Email"
                                 placeholder="Enter email address"
-                                value={form.email}
-                                onChange={(e) => handleChange("email", e.target.value)}
-                                error={!!displayErrors.email}
-                                helperText={displayErrors.email}
+                                value={data.email}
+                                onChange={(e) => setData("email", e.target.value)}
+                                error={!!errors.email}
+                                helperText={errors.email}
                                 disabled={processing}
                             />
 
@@ -169,10 +105,10 @@ export default function UserCreate({ errors }) {
                                     type={showPassword ? "text" : "password"}
                                     label="Password"
                                     placeholder="Enter password"
-                                    value={form.password}
-                                    onChange={(e) => handleChange("password", e.target.value)}
-                                    error={!!displayErrors.password}
-                                    helperText={displayErrors.password}
+                                    value={data.password}
+                                    onChange={(e) => setData("password", e.target.value)}
+                                    error={!!errors.password}
+                                    helperText={errors.password}
                                     disabled={processing}
                                     InputProps={{
                                         endAdornment: (
@@ -188,7 +124,7 @@ export default function UserCreate({ errors }) {
                                         ),
                                     }}
                                 />
-                                {form.password && (
+                                {data.password && (
                                     <Box sx={{ mt: 1 }}>
                                         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                                             <LinearProgress
@@ -211,10 +147,10 @@ export default function UserCreate({ errors }) {
                                 type={showPasswordConfirmation ? "text" : "password"}
                                 label="Password Confirmation"
                                 placeholder="Re-enter password"
-                                value={form.password_confirmation}
-                                onChange={(e) => handleChange("password_confirmation", e.target.value)}
-                                error={!!displayErrors.password_confirmation}
-                                helperText={displayErrors.password_confirmation}
+                                value={data.password_confirmation}
+                                onChange={(e) => setData("password_confirmation", e.target.value)}
+                                error={!!errors.password_confirmation}
+                                helperText={errors.password_confirmation}
                                 disabled={processing}
                                 InputProps={{
                                     endAdornment: (
@@ -233,7 +169,7 @@ export default function UserCreate({ errors }) {
                                 }}
                             />
 
-                            {form.password && form.password_confirmation && form.password === form.password_confirmation && (
+                            {data.password && data.password_confirmation && data.password === data.password_confirmation && (
                                 <Alert severity="success">Passwords match!</Alert>
                             )}
                         </Stack>

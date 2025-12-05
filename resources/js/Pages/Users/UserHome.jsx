@@ -1,7 +1,8 @@
-import { Link } from "@inertiajs/react";
-import React from "react";
+import { Link, router } from "@inertiajs/react";
+import React, { useState } from "react";
 import Layout from "../../Layouts/Layout";
 import BasicTable from "../../Components/BasicTable";
+import DeleteModal from "../../Components/DeleteModal";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -12,6 +13,24 @@ import Stack from "@mui/material/Stack";
 import { Button } from "@mui/material";
 
 export default function UserHome({ users }) {
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
+
+    const handleDeleteClick = (user) => {
+        setSelectedUser(user);
+        setDeleteModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setDeleteModalOpen(false);
+        setSelectedUser(null);
+    };
+
+    const handleConfirmDelete = () => {
+        router.delete(`/users/${selectedUser.id}`);
+        handleCloseModal();
+    };
+
     return (
         <Box sx={{ p: 3 }}>
             <Link href="/users/create">
@@ -43,14 +62,22 @@ export default function UserHome({ users }) {
                             </Link>
                         </Tooltip>
                         <Tooltip title="Delete">
-                            <Link href={`/users/${row.id}`}>
-                                <IconButton color="error" size="small">
-                                    <DeleteIcon />
-                                </IconButton>
-                            </Link>
+                            <IconButton
+                                color="error"
+                                size="small"
+                                onClick={() => handleDeleteClick(row)}
+                            >
+                                <DeleteIcon />
+                            </IconButton>
                         </Tooltip>
                     </Stack>
                 )}
+            />
+            <DeleteModal
+                open={deleteModalOpen}
+                onClose={handleCloseModal}
+                onConfirm={handleConfirmDelete}
+                itemName={selectedUser?.name}
             />
         </Box>
     );

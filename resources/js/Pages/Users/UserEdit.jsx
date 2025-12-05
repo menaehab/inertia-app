@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Layout from "../../Layouts/Layout";
-import { router } from "@inertiajs/react";
+import { router, useForm } from "@inertiajs/react";
 import {
     Box,
     Card,
@@ -22,79 +22,20 @@ import {
     Cancel as CancelIcon,
 } from "@mui/icons-material";
 
-export default function UserEdit({ user, errors }) {
-    const [form, setForm] = useState({
+export default function UserEdit({ user }) {
+    const { data, setData, processing, put, errors } = useForm({
         name: user.name,
         email: user.email,
         password: "",
         password_confirmation: "",
     });
-    const [processing, setProcessing] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showPasswordConfirmation, setShowPasswordConfirmation] =
         useState(false);
-    const [validationErrors, setValidationErrors] = useState({});
-    const displayErrors = { ...errors, ...validationErrors };
-
-    const handleChange = (field, value) => {
-        setForm({
-            ...form,
-            [field]: value,
-        });
-    };
-
-     const validateForm = () => {
-        const newErrors = {};
-
-        // Name validation
-        if (!form.name.trim()) {
-            newErrors.name = "Name is required";
-        } else if (form.name.trim().length < 3) {
-            newErrors.name = "Name must be at least 3 characters";
-        }
-
-        // Email validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!form.email.trim()) {
-            newErrors.email = "Email is required";
-        } else if (!emailRegex.test(form.email)) {
-            newErrors.email = "Please enter a valid email address";
-        }
-
-        // Password validation (optional for edit - only validate if provided)
-        if (form.password) {
-            if (form.password.length < 8) {
-                newErrors.password = "Password must be at least 8 characters";
-            }
-        }
-
-        // Password confirmation validation (only if password is provided)
-        if (form.password && form.password !== form.password_confirmation) {
-            newErrors.password_confirmation = "Passwords do not match";
-        }
-
-        setValidationErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        if (!validateForm()) {
-            return;
-        }
-
-        setProcessing(true);
-
-        router.put(`/users/${user.id}`, form, {
-            onSuccess: () => {
-                setProcessing(false);
-            },
-            onError: (errors) => {
-                setValidationErrors(errors);
-                setProcessing(false);
-            },
-        });
+        put(`/users/${user.id}`);
     };
 
     const handleCancel = () => {
@@ -102,7 +43,7 @@ export default function UserEdit({ user, errors }) {
     };
 
     const getPasswordStrength = () => {
-        const { password } = form;
+        const { password } = data;
         if (!password) return { value: 0, label: "", color: "error" };
 
         let strength = 0;
@@ -112,8 +53,10 @@ export default function UserEdit({ user, errors }) {
         if (/[0-9]/.test(password)) strength += 12.5;
         if (/[^A-Za-z0-9]/.test(password)) strength += 12.5;
 
-        if (strength < 40) return { value: strength, label: "Weak", color: "error" };
-        if (strength < 70) return { value: strength, label: "Medium", color: "warning" };
+        if (strength < 40)
+            return { value: strength, label: "Weak", color: "error" };
+        if (strength < 70)
+            return { value: strength, label: "Medium", color: "warning" };
         return { value: strength, label: "Strong", color: "success" };
     };
 
@@ -139,12 +82,12 @@ export default function UserEdit({ user, errors }) {
                                     fullWidth
                                     label="Name"
                                     placeholder="Enter full name"
-                                    value={form.name}
+                                    value={data.name}
                                     onChange={(e) =>
-                                        handleChange("name", e.target.value)
+                                        setData("name", e.target.value)
                                     }
-                                    error={!!displayErrors.name}
-                                    helperText={displayErrors.name}
+                                    error={!!errors.name}
+                                    helperText={errors.name}
                                     disabled={processing}
                                 />
                                 <TextField
@@ -153,12 +96,12 @@ export default function UserEdit({ user, errors }) {
                                     type="email"
                                     label="Email"
                                     placeholder="Enter email address"
-                                    value={form.email}
+                                    value={data.email}
                                     onChange={(e) =>
-                                        handleChange("email", e.target.value)
+                                        setData("email", e.target.value)
                                     }
-                                    error={!!displayErrors.email}
-                                    helperText={displayErrors.email}
+                                    error={!!errors.email}
+                                    helperText={errors.email}
                                     disabled={processing}
                                 />
                                 <Box>
@@ -169,15 +112,12 @@ export default function UserEdit({ user, errors }) {
                                         }
                                         label="Password"
                                         placeholder="Leave blank to keep current password"
-                                        value={form.password}
+                                        value={data.password}
                                         onChange={(e) =>
-                                            handleChange(
-                                                "password",
-                                                e.target.value
-                                            )
+                                            setData("password", e.target.value)
                                         }
-                                        error={!!displayErrors.password}
-                                        helperText={displayErrors.password}
+                                        error={!!errors.password}
+                                        helperText={errors.password}
                                         disabled={processing}
                                         InputProps={{
                                             endAdornment: (
@@ -201,7 +141,7 @@ export default function UserEdit({ user, errors }) {
                                             ),
                                         }}
                                     />
-                                    {form.password && (
+                                    {data.password && (
                                         <Box sx={{ mt: 1 }}>
                                             <Box
                                                 sx={{
@@ -244,19 +184,15 @@ export default function UserEdit({ user, errors }) {
                                     }
                                     label="Password Confirmation"
                                     placeholder="Re-enter password"
-                                    value={form.password_confirmation}
+                                    value={data.password_confirmation}
                                     onChange={(e) =>
-                                        handleChange(
+                                        setData(
                                             "password_confirmation",
                                             e.target.value
                                         )
                                     }
-                                    error={
-                                        !!displayErrors.password_confirmation
-                                    }
-                                    helperText={
-                                        displayErrors.password_confirmation
-                                    }
+                                    error={!!errors.password_confirmation}
+                                    helperText={errors.password_confirmation}
                                     disabled={processing}
                                     InputProps={{
                                         endAdornment: (
@@ -281,10 +217,10 @@ export default function UserEdit({ user, errors }) {
                                     }}
                                 />
 
-                                {form.password &&
-                                    form.password_confirmation &&
-                                    form.password ===
-                                        form.password_confirmation && (
+                                {data.password &&
+                                    data.password_confirmation &&
+                                    data.password ===
+                                        data.password_confirmation && (
                                         <Alert severity="success">
                                             Passwords match!
                                         </Alert>
